@@ -6,7 +6,7 @@ This is an example of using a custom rating bar with vector drawable support.
 </p>
 
 To use it you'll need [RatingBarSvg](https://github.com/AlekseyYakovlev/RatingBarSvg/blob/master/app/src/main/java/ru/spb/yakovlev/ratingbarsvg/ui/custom/RatingBarSvg.kt) and [ratingbar_svg_selector](https://github.com/AlekseyYakovlev/RatingBarSvg/blob/master/app/src/main/res/drawable/ratingbar_svg_selector.xml).
-And for additional features like drawableHeight, drawableWidth and innerPadding from layout, you should declare them in [values\attr.xml](https://github.com/AlekseyYakovlev/RatingBarSvg/blob/master/app/src/main/res/values/attrs.xml).
+And to use additional features like drawableHeight, drawableWidth and innerPadding from layout, you should declare them in [values\attr.xml](https://github.com/AlekseyYakovlev/RatingBarSvg/blob/master/app/src/main/res/values/attrs.xml).
 
 
 Related topics:    
