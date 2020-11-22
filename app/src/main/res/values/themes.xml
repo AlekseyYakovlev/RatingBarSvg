@@ -1,0 +1,5 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.RatingBarSvg" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
+
+</resources>
