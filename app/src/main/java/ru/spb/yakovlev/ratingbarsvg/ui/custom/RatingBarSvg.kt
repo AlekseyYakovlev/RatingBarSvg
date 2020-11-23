@@ -28,6 +28,8 @@ import ru.spb.yakovlev.RatingBarSvg.R
  * @param innerPadding The space between drawables, default is 2dp.
  * @param drawableHeight The height of the drawable, if not specified, then is taken from drawable settings.
  * @param drawableWidth The width of the drawable, if not specified, then is taken from drawable settings.
+ * @param isCompensatingMarginActive The flag indicates that the view should be moved to the left so that
+ * the left edge of the first drawable would align with the initial position of the views' left edge.
  */
 class RatingBarSvg @JvmOverloads constructor(
     context: Context,
@@ -36,6 +38,7 @@ class RatingBarSvg @JvmOverloads constructor(
     var innerPadding: Int = 2,
     var drawableHeight: Int = 0,
     var drawableWidth: Int = 0,
+    var isCompensatingMarginActive: Boolean = true,
 ) : AppCompatRatingBar(context, attrs, defStyleAttr) {
 
     private var mSampleTile: Bitmap? = null
@@ -43,19 +46,26 @@ class RatingBarSvg @JvmOverloads constructor(
     private var halfOfInnerPadding: Int
 
     init {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.RatingBarSvg)
-        halfOfInnerPadding =
-            (typedArray.getDimension(
-                R.styleable.RatingBarSvg_innerPadding,
-                innerPadding.toFloat()
-            ) / 2).toInt()
-        drawableHeight =
-            typedArray.getDimension(R.styleable.RatingBarSvg_drawableHeight, 0f).toInt()
-        drawableWidth = typedArray.getDimension(R.styleable.RatingBarSvg_drawableWidth, 0f).toInt()
+        attrs?.let { getSettingsFromAttr(it) }
 
+        halfOfInnerPadding = (innerPadding / 2)
         val drawable = tileify(progressDrawable, false) as LayerDrawable
         progressDrawable = drawable
-        typedArray.recycle()
+    }
+
+    /**
+     *  Remove this function if you aren't using attr.xml
+     */
+    private fun getSettingsFromAttr(attrs: AttributeSet) {
+        context.obtainStyledAttributes(attrs, R.styleable.RatingBarSvg).run {
+            innerPadding =
+                getDimension(R.styleable.RatingBarSvg_innerPadding, innerPadding.toFloat()).toInt()
+            drawableHeight = getDimension(R.styleable.RatingBarSvg_drawableHeight, 0f).toInt()
+            drawableWidth = getDimension(R.styleable.RatingBarSvg_drawableWidth, 0f).toInt()
+            isCompensatingMarginActive =
+                getBoolean(R.styleable.RatingBarSvg_isCompensatingMarginActive, true)
+            recycle()
+        }
     }
 
     /**
@@ -147,7 +157,6 @@ class RatingBarSvg @JvmOverloads constructor(
             MeasureSpec.EXACTLY
         } else heightMeasureSpec
 
-
         super.onMeasure(widthMeasureSpec, heightMS)
 
         if (mSampleTile != null) {
@@ -157,11 +166,14 @@ class RatingBarSvg @JvmOverloads constructor(
                 resolveSizeAndState(mHeight, heightMeasureSpec, 0)
             )
         }
-        (layoutParams as ViewGroup.MarginLayoutParams).setMargins(
-            marginStart - halfOfInnerPadding,
-            marginTop,
-            marginEnd,
-            marginBottom
-        )
+
+        if (isCompensatingMarginActive) {
+            (layoutParams as ViewGroup.MarginLayoutParams).setMargins(
+                marginStart - halfOfInnerPadding,
+                marginTop,
+                marginEnd,
+                marginBottom
+            )
+        }
     }
 }
